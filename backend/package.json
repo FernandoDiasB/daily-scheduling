@@ -1,0 +1,35 @@
+{
+  "name": "daily-scheduling",
+  "version": "1.0.0",
+  "description": "agenda project for patient registration and appointment scheduling",
+  "homepage": "https://github.com/FernandoDiasB/daily-scheduling#readme",
+  "bugs": {
+    "url": "https://github.com/FernandoDiasB/daily-scheduling/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FernandoDiasB/daily-scheduling.git"
+  },
+  "license": "ISC",
+  "author": "Fernando Dias",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "start:prod": "powershell -Command \"$env:NODE_ENV='production'; nodemon server.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.19.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

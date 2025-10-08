@@ -1,0 +1,25 @@
+# Dependências
+/node_modules
+
+# Variáveis de ambiente
+.env
+config.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Cache
+/.pnp
+.pnp.js
+
+# Diretórios de build
+/dist
+/build
+
+# IDE/Editor configs
+.vscode/
+.idea/
+.DS_Store
