@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, 'Você precisa registrar um nome.'],
+  name: {
+    type: String,
+    required: [true, 'Você precisa registrar um nome.'],
 
-    },
-    email: {
+  },
+  email: {
     type: String,
     required: [true, "O e-mail é obrigatório"],
     unique: true,
@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema({
     minlength: 6,
     select: false,
   },
-  crp: {
+  crm: {
+    type: String,
+    trim: true,
+  },
+  specialty: {
     type: String,
     trim: true,
   },

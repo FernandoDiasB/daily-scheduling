@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,44 +12,33 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate("/dashboard");
-    } catch (error) {
-      alert("Credenciais inválidas");
+      const res = await api.post("/auth/login", { email, password });
+      login(res.data); // 🔥 salva user + token no contexto
+      navigate("/dashboard"); // redireciona
+    } catch (err) {
+      alert("Erro ao fazer login");
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-md w-80"
-      >
-        <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <form onSubmit={handleSubmit} className="p-6 bg-gray-100 rounded flex flex-col gap-3">
+        <h2 className="text-xl font-semibold">Login</h2>
         <input
           type="email"
-          placeholder="Email"
-          className="border p-2 w-full mb-3 rounded"
+          placeholder="E-mail"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="border p-2 rounded"
         />
         <input
           type="password"
           placeholder="Senha"
-          className="border p-2 w-full mb-4 rounded"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="border p-2 rounded"
         />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
-        >
-          Entrar
-        </button>
-        <p className="text-center mt-4 text-sm">
-          Não tem conta?{" "}
-          <a href="/register" className="text-blue-600 hover:underline">
-            Cadastre-se
-          </a>
-        </p>
+        <button className="bg-blue-500 text-white p-2 rounded">Entrar</button>
       </form>
     </div>
   );

@@ -6,9 +6,9 @@ const patientSchema = new mongoose.Schema({
         ref:'User',
         required: true
     },
-        name:{
+    patientName:{
         type: String,
-        required: [true, 'Você precisa registrar um nome.']
+        required: [true, 'Você precisa registrar um nome...']
     },
     email:{
         type: String

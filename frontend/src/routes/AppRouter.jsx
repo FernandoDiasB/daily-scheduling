@@ -4,10 +4,10 @@ import { AuthContext } from "../context/AuthContext";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
+import Appointments from "../pages/Appointments";
 
 function PrivateRoute({ children }) {
-  const { user, loading } = useContext(AuthContext);
-  if (loading) return <p>Carregando...</p>;
+  const { user } = useContext(AuthContext);
   return user ? children : <Navigate to="/login" />;
 }
 
@@ -22,6 +22,14 @@ export default function AppRouter() {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/appointments"
+          element={
+            <PrivateRoute>
+              <Appointments />
             </PrivateRoute>
           }
         />

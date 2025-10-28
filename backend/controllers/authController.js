@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const jwt = require("jsonwebtoken");
 const generateToken = require("../utils/generateToken");
 
 exports.register = async (req, res) => {
@@ -22,7 +23,7 @@ exports.register = async (req, res) => {
             token: generateToken(user._id),
         });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao registrar usuário", error });
+        res.status(500).json({ message: "Erro ao registrar usuário", error: error.message });
     }
 };
 
@@ -52,4 +53,33 @@ exports.login = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Erro ao fazer login", error });
     }
+};
+
+exports.protect = async (req, res, next) => {
+  try {
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      return res.status(401).json({ message: "Você não está logado" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser) {
+      return res.status(401).json({ message: "Usuário não encontrado" });
+    }
+
+    req.user = currentUser; // ✅ agora req.user.id estará disponível
+    next();
+  } catch (error) {
+    console.error("Erro no middleware protect:", error);
+    res.status(401).json({ message: "Token inválido", error: error.message });
+  }
 };
