@@ -3,13 +3,23 @@ const Patient = require('../models/patientModel');
 // 📋 Criar novo paciente
 exports.createPatient = async (req, res) => {
   try {
-    const { patientName, email, phone, birthDate } = req.body;
+    const { patientName, email, phone, birthDate, notes } = req.body;
 
     if (!patientName) {
       return res.status(400).json({
         status: "fail",
         message: "O nome do paciente é obrigatório.",
       });
+    }
+    if (email) {
+      const existingPatient = await Patient.findOne({ email });
+      if (existingPatient) {
+        return res.status(400).json({
+          status: "fail",
+          message: "Esse email já está cadastrado.",
+        });
+      }
+
     }
 
     const newPatient = await Patient.create({
@@ -18,6 +28,7 @@ exports.createPatient = async (req, res) => {
       email,
       phone,
       birthDate,
+      notes
     });
 
     res.status(201).json({
@@ -39,13 +50,30 @@ exports.createPatient = async (req, res) => {
 // 📄 Listar todos os pacientes do médico logado
 exports.getAllPatients = async (req, res) => {
   try {
-    const patients = await Patient.find({ doctor: req.user.id }).sort({ createdAt: -1 });
+    let queryObj = { doctor: req.user.id };
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 8;
+    const skip = (page - 1) * limit;
+
+    const patients = await Patient.find(queryObj)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(skip);
+
+    if(req.query.page){
+      const numPatients = await Patient.countDocuments();
+      if(skip >= numPatients) throw new Error ('This page not does exists!')
+    }
+
+    const totalPatients = await Patient.countDocuments(queryObj);
+
 
     res.status(200).json({
       status: "success",
-      results: patients.length,
+      results: totalPatients,
       data: {
-        patients,
+        patients
       },
     });
   } catch (err) {

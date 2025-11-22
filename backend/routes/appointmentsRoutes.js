@@ -7,11 +7,12 @@ router.use(protect); // ✅ força autenticação
 
 router
   .route("/")
-  .get(appointmentController.getAppointments)
+  .get(appointmentController.getAllAppointments)
   .post(appointmentController.createAppointment);
 
 router
   .route("/:id")
+  .get(appointmentController.getAppointments)
   .patch(appointmentController.updateAppointment)
   .delete(appointmentController.deleteAppointment);
 

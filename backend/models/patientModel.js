@@ -20,8 +20,8 @@ const patientSchema = new mongoose.Schema({
         type: String
     },
     notes:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'Note'
+        type: String,
+        trim: true
     }],
       createdAt: {
     type: Date,

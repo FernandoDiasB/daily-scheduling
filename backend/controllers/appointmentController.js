@@ -73,10 +73,41 @@ exports.createAppointment = async (req, res) => {
 
 exports.getAllAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find();
+    console.log("Usuário logado recebido pelo backend:", req.user);
+
+    let queryObj = { doctor: req.user.id };
+
+    if(req.query.status){
+      queryObj.status = req.query.status;
+    }
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 4;
+    const skip = (page - 1) * limit;
+
+        const appointments = await Appointment.find(queryObj)
+      .populate("patient", "patientName email")
+      .sort({ date: 1 })
+      .limit(limit)
+      .skip(skip); // ✅ ordena por data (mais antigos primeiro)
+
+    if (!appointments) {
+      res.status(404).json({
+        status: 'fail',
+        message: 'Sem consultas agendadas!'
+      })
+    }
+
+    if (req.query.page) {
+      const numAppointments = await Appointment.countDocuments();
+      if (skip >= numAppointments) throw new Error('This page does not exist.');
+    }
+    
+    const totalAppointments = await Appointment.countDocuments(queryObj);
+
     res.status(200).json({
-      status: 'success',
-      results: appointments.length,
+      status: 'succes',
+      results: totalAppointments,
       data: {
         appointments
       }
@@ -91,15 +122,21 @@ exports.getAllAppointments = async (req, res) => {
 
 exports.getAppointments = async (req, res) => {
   try {
-    
     console.log("Usuário logado recebido pelo backend:", req.user);
 
-    const appointments = await Appointment.find({ doctor: req.user.id })
-      .populate("patient", "patientName email")
-      .sort({ date: 1 }); // ✅ ordena por data (mais antigos primeiro)
+    const appointments = await Appointment.findById(req.params.id)
+      .populate("patient", "patientName email");
+
+    if (!appointments) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Agendamento não encontrado.'
+      });
+    }
 
     res.status(200).json({
       status: 'success',
+      results: appointments.length,
       data: {
         appointments
       }
